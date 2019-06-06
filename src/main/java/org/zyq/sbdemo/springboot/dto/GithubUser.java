@@ -3,6 +3,16 @@ package org.zyq.sbdemo.springboot.dto;
 public class GithubUser {
     private String name;
     private long id;
+
+    @Override
+    public String toString() {
+        return "GithubUser{" +
+                "name='" + name + '\'' +
+                ", id=" + id +
+                ", bio='" + bio + '\'' +
+                '}';
+    }
+
     private  String bio;
 
     public String getName() {
