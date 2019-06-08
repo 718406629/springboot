@@ -11,7 +11,9 @@ import org.zyq.sbdemo.springboot.model.User;
 import org.zyq.sbdemo.springboot.provider.GithubProvider;
 import org.zyq.sbdemo.springboot.service.UserService;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
@@ -32,7 +34,8 @@ public class AuthorizeController {
 
     @GetMapping("callback")
     public String callback(@RequestParam(name = "code") String code,
-                           @RequestParam(name = "state") String state, HttpServletRequest request) {
+                           @RequestParam(name = "state") String state, HttpServletRequest request,
+                           HttpServletResponse response) {
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientId);
         accessTokenDTO.setClient_secret(clienSecret);
@@ -42,17 +45,18 @@ public class AuthorizeController {
         String accessToken = githubProvider.getAccessToken(accessTokenDTO);
         GithubUser githubUser = githubProvider.getUser(accessToken);
         System.out.println(githubUser.getName());
-        if(githubUser!=null){
+        if(githubUser!=null && githubUser.getName() !=null){
             User user=new User();
-            user.setToken(UUID.randomUUID().toString());
+            String token = UUID.randomUUID().toString();
+            user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            user.setAvatarUrl(githubUser.getAvatar_url());
             userService.insert(user);
+            response.addCookie(new Cookie("token",token));
 
-            //登录成功，写cookie 和 session
-            request.getSession().setAttribute("user",user);
             return "redirect:/";
         }
         else{
