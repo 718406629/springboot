@@ -1,17 +1,18 @@
 package org.zyq.sbdemo.springboot.controller;
 
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.zyq.sbdemo.springboot.dto.QuestionDTO;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.zyq.sbdemo.springboot.dto.PaginationDTO;
 import org.zyq.sbdemo.springboot.model.User;
 import org.zyq.sbdemo.springboot.service.QuestionService;
 import org.zyq.sbdemo.springboot.service.UserService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @Controller
 public class IndexController {
@@ -21,7 +22,9 @@ public class IndexController {
     @Autowired
     private QuestionService questionService;
     @GetMapping("/")
-    public String hello(HttpServletRequest request,Model model){
+    public String hello(HttpServletRequest request, Model model,
+                        @RequestParam(value = "page",defaultValue ="1") Integer page,
+                        @RequestParam(value = "size",defaultValue ="5") Integer size){
         Cookie[] cookies=request.getCookies();
         if (cookies != null && cookies.length != 0) {
             for (Cookie cookie : cookies) {
@@ -36,9 +39,11 @@ public class IndexController {
                 }
             }
         }
+        PageHelper.startPage(page,size);
+       PaginationDTO paginationDTO =questionService.selectAllQuestionDTO(page,size);
 
-       List<QuestionDTO> questionDTOList=questionService.selectAllQuestionDTO();
-       model.addAttribute("questionDTOList",questionDTOList);
+       model.addAttribute("paginationDTO",paginationDTO);
+
 
 
        return "index";

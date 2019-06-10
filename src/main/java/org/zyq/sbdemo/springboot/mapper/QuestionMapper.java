@@ -2,6 +2,7 @@ package org.zyq.sbdemo.springboot.mapper;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 import org.zyq.sbdemo.springboot.model.Question;
@@ -15,6 +16,9 @@ public interface QuestionMapper {
             "#{gmtCreate},#{gmtModified},#{creator},#{tag})")
     void create(Question question);
 
-    @Select("select * from question")
-    List<Question> selectAll();
+    @Select("select * from question limit #{size},#{page}")
+    List<Question> selectAll(@Param("size") Integer size,@Param("page") Integer page);
+
+    @Select("select count(1) from question")
+    Integer selectAllRecord();
 }

@@ -3,6 +3,7 @@ package org.zyq.sbdemo.springboot.service.impl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.zyq.sbdemo.springboot.dto.PaginationDTO;
 import org.zyq.sbdemo.springboot.dto.QuestionDTO;
 import org.zyq.sbdemo.springboot.mapper.QuestionMapper;
 import org.zyq.sbdemo.springboot.mapper.UserMapper;
@@ -26,21 +27,32 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
-    public List<Question> selectAll() {
-        return questionMapper.selectAll();
+    public List<Question> selectAll(Integer page,Integer size) {
+        return questionMapper.selectAll(page,size);
     }
 
     @Override
-    public List<QuestionDTO> selectAllQuestionDTO() {
-        List<Question> questionList = selectAll();
+    public PaginationDTO selectAllQuestionDTO(Integer page,Integer size) {
+        Integer setOff=size*(page-1);
+        PaginationDTO paginationDTO =new PaginationDTO();
+        List<Question> questionList =questionMapper.selectAll(setOff,size);
         List<QuestionDTO> questionDTOList=new ArrayList<QuestionDTO>();
         for(Question question : questionList){
+            System.out.println(question.getViewCount());
         User user=userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        return questionDTOList;
+        paginationDTO.setQuestionDTOList(questionDTOList);
+        Integer totalCount=selectAllRecord();
+        paginationDTO.setpagination(page,size,totalCount);
+        return paginationDTO;
+    }
+
+    @Override
+    public Integer selectAllRecord() {
+        return questionMapper.selectAllRecord();
     }
 }
