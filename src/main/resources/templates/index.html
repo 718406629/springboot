@@ -6,7 +6,9 @@
     <link rel="stylesheet" href="css/bootstrap.min.css"/>
     <link rel="stylesheet" href="css/bootstrap-theme.min.css"/>
     <link rel="stylesheet" href="css/springboot.css"/>
+    <script src="static/js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js" type="application/javascript"></script>
+
 </head>
 <body>
 <nav class="navbar navbar-default">
@@ -17,7 +19,7 @@
                     data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
                 <span class="sr-only">springboot社区</span>
             </button>
-            <a class="navbar-brand" href="#">springboot社区</a>
+            <a class="navbar-brand" href="/">springboot社区</a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -60,7 +62,7 @@
                 <div class="media-left">
                     <a href="#">
                         <img class="media-object img-thumbnail"
-                             th:src="${questionDTO.user}"
+                             th:src="${questionDTO.user.avatarUrl}"
                              >
                     </a>
                 </div>
@@ -71,6 +73,33 @@
                         <span th:text="${#dates.format(questionDTO.gmtCreate,'dd/MMM/yyyy HH:mm')}"></span></span>
                 </div>
             </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li th:if="${paginationDTO.showFirstPage}">
+                        <a href="/?page=1" aria-label="Previous">
+                            <span aria-hidden="true">&lt;&lt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${paginationDTO.showPrevious}">
+                        <a th:href="@{/(page=${paginationDTO.page-1})}" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span>
+                        </a>
+                    </li>
+                    <li th:each="page:${paginationDTO.pages}" th:class="${paginationDTO.page==page}?'active':''">
+                        <a th:href="@{/(page=${page})}" th:text="${page}" ></a>
+                    </li>
+                    <li th:if="${paginationDTO.showNext}">
+                        <a th:href="@{/(page=${paginationDTO.page+1})}" aria-label="Previous">
+                            <span aria-hidden="true">&gt;</span>
+                        </a>
+                    </li>
+                    <li th:if="${paginationDTO.showEndPage}">
+                        <a th:href="@{/(page=${paginationDTO.totalPage})}" aria-label="Previous">
+                            <span aria-hidden="true">&gt;&gt;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
 
         <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">

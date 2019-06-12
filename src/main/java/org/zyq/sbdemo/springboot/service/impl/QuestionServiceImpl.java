@@ -33,21 +33,33 @@ public class QuestionServiceImpl implements QuestionService {
 
     @Override
     public PaginationDTO selectAllQuestionDTO(Integer page,Integer size) {
-        Integer setOff=size*(page-1);
+
+
+
         PaginationDTO paginationDTO =new PaginationDTO();
+        Integer totalCount=selectAllRecord();
+        paginationDTO.setPagination(page,size,totalCount);
+        if(page<1){
+            page=1;
+        }
+        if(page>paginationDTO.getTotalPage()){
+            page=paginationDTO.getTotalPage();
+        }
+
+
+        Integer setOff=size*(page-1);
         List<Question> questionList =questionMapper.selectAll(setOff,size);
         List<QuestionDTO> questionDTOList=new ArrayList<QuestionDTO>();
         for(Question question : questionList){
             System.out.println(question.getViewCount());
-        User user=userMapper.findById(question.getCreator());
+            User user=userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
         paginationDTO.setQuestionDTOList(questionDTOList);
-        Integer totalCount=selectAllRecord();
-        paginationDTO.setpagination(page,size,totalCount);
+
         return paginationDTO;
     }
 

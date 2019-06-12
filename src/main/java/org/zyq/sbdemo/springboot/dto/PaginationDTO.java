@@ -2,6 +2,7 @@ package org.zyq.sbdemo.springboot.dto;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -12,25 +13,41 @@ public class PaginationDTO {
     //前一页
     private  boolean showPrevious;
     //当前页
-    private  boolean currentPage;
+    private  Integer page;
     //后一页
     private  boolean showNext;
     //尾页
     private boolean showEndPage;
 
-    //总页数
+    private  Integer totalPage;
+
+
 
 
    //页码数组
-    private  List<Integer> pages;
+    private  List<Integer> pages=new ArrayList<>();
 
-    public void setpagination(Integer page, Integer size, Integer totalCount) {
-          Integer totalPage;
+    public void setPagination(Integer page, Integer size, Integer totalCount) {
+
+
        if(totalCount%size==0){
            totalPage=totalCount/size;
        }else{
            totalPage=totalCount/size+1;
        }
+
+        this.page=page;
+       //加入当前页码
+       pages.add(page);
+       for(int i=1;i<=3;i++){
+           if(page-i>0){
+               pages.add(0,page-i);
+           }
+           if(page+i<=totalPage){
+               pages.add(page+i);
+           }
+       }
+
 
        //是否显示上一页
         if(page==1){
@@ -53,6 +70,7 @@ public class PaginationDTO {
             showFirstPage=true;
 
         }
+        //是否展示最后一页
         if(pages.contains(totalPage)){
             showEndPage=false;
         }else {
