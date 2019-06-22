@@ -51,7 +51,7 @@ public class QuestionServiceImpl implements QuestionService {
         List<Question> questionList =questionMapper.selectAll(setOff,size);
         List<QuestionDTO> questionDTOList=new ArrayList<QuestionDTO>();
         for(Question question : questionList){
-            System.out.println(question.getViewCount());
+
             User user=userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);

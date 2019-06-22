@@ -1,6 +1,5 @@
 package org.zyq.sbdemo.springboot.controller;
 
-import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,7 +38,7 @@ public class IndexController {
                 }
             }
         }
-        PageHelper.startPage(page,size);
+
        PaginationDTO paginationDTO =questionService.selectAllQuestionDTO(page,size);
 
        model.addAttribute("paginationDTO",paginationDTO);
